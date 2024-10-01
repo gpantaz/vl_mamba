@@ -1,5 +1,5 @@
-# Shaking Up VLMs: Comparing Transformers and Structured State Space Models for Vision \& Language Modeling
-[[Model Checkpoints](#model-checkpoints)][[Data](#data)][[Training](#training)]
+# Shaking Up VLMs: Comparing Transformers and Structured State Space Models for Vision \& Language Modeling (EMNLP 2024)
+[[Paper](https://arxiv.org/pdf/2409.05395)][[Model Checkpoints](#model-checkpoints)][[Data](#data)][[Training](#training)]
 
 ## Requirements
 
