@@ -1,0 +1,28 @@
+{
+	"recommendations": [
+		"mikestead.dotenv",
+		"editorconfig.editorconfig",
+		"tamasfe.even-better-toml",
+		"PeterSchmalfeldt.explorer-exclude",
+		"eamodio.gitlens",
+		"nhoizey.gremlins",
+		"ms-toolsai.jupyter",
+		"ms-toolsai.jupyter-keymap",
+		"ms-toolsai.jupyter-renderers",
+		"yzhang.markdown-all-in-one",
+		"christian-kohler.path-intellisense",
+		"ms-python.vscode-pylance",
+		"ms-python.python",
+		"njpwerner.autodocstring",
+		"ms-vscode-remote.remote-containers",
+		"ms-vscode-remote.remote-ssh",
+		"ms-vscode-remote.remote-ssh-edit",
+		"ms-vscode-remote.vscode-remote-extensionpack",
+		"stkb.rewrap",
+		"visualstudioexptteam.vscodeintellicode",
+		"kevinkyang.auto-comment-blocks",
+		"redhat.vscode-yaml",
+		"esbenp.prettier-vscode",
+		"foxundermoon.shell-format"
+	]
+}
