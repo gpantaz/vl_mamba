@@ -3,9 +3,22 @@
 
 ## Requirements
 
-## Model Checkpoints
+## Model Checkpoints 🤗
 
 
+### Pretrained Checkpoints
+
+
+| Model                                                                     |
+| :------------------------------------------------------------------------ |
+| [Pythia-VL-1B](https://huggingface.co/gpantaz/pretrained_pythiavl_1b)     |
+| [Mamba-VL-790M](https://huggingface.co/gpantaz/pretrained_mambavl_790m)   |
+| [Pythia-VL-1.4B](https://huggingface.co/gpantaz/pretrained_pythiavl_1.4b) |
+| [Mamba-VL-1.4B](https://huggingface.co/gpantaz/pretrained_mambavl_1.4b)   |
+| [Pythia-VL-2.8B](https://huggingface.co/gpantaz/pretrained_pythiavl_2.8b) |
+| [Mamba-VL-2.8B](https://huggingface.co/gpantaz/pretrained_mambavl_2.8b)   |
+
+### Instruction-tuned Checkpoints
 
 | Model                                                                    |  COCO  | NoCaps | VQAv2 |  GQA  | V7W (test-T) |  VSR  | POPE  | RefCOCO (testA) | RefCOCO (testB) | RefCOCO+ (testA) | RefCOCO+ (testB) | RefCOCOg | V7W (test-P) | TextCaps | TextVQA | AI2D  |
 | :----------------------------------------------------------------------- | :----: | :----: | :---: | :---: | :----------: | :---: | :---: | :-------------: | :-------------: | :--------------: | :--------------: | :------: | :----------: | :------: | :-----: | :---: |
