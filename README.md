@@ -3,6 +3,20 @@
 
 ## Requirements
 
+```
+conda create -p ~/sharedscratch/conda_envs/athnlp2024-cu12 python=3.10
+
+# Install dependencies
+poetry install
+
+# Install flash attention / mamba
+
+poe install-flash-attn
+poe install-mamba-ssm
+poe install-causal-conv1d
+```
+
+
 ## Model Checkpoints 🤗
 
 
@@ -37,7 +51,29 @@
 
 ### Pretraining
 
+#### Pythia
+
+```
+./scripts/pretrain_pythia.sh
+```
+
+#### Mamba
+```
+./scripts/pretrain_mamba.sh
+```
+
 ### Instruction-tuning
+
+#### Pythia
+
+```
+./scripts/finetune_pythia.sh path/to/pretrained/pythia/model /path/to/dataset/cache /path/to/root/dataset/path /output/model/directory wandb_run_name
+```
+
+#### Mamba
+```
+./scripts/finetune_mamba.sh path/to/pretrained/mamba/model /path/to/dataset/cache /path/to/root/dataset/path /output/model/directory wandb_run_name
+```
 
 ### Training logs
 
