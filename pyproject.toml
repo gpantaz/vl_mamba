@@ -1,0 +1,288 @@
+[tool.poetry]
+name = "vl_mamba"
+version = "0.1.0"
+description = ""
+authors = ["George Pantazopoulos <gmp2000@hw.ac.uk>"]
+readme = "README.md"
+repository = "https://https://github.com/gpantaz/vl_mamba"
+
+packages = [{include = "vl_mamba", from = "src"}]
+
+[tool.poetry.group.dev.dependencies]
+ruff = "^0.5.0"
+basedpyright = "^1.11.0"
+
+[tool.poe]
+envfile = ".env"
+
+[tool.poe.tasks]
+
+[tool.poe.tasks.format]
+help = "Format using the pre-commit hooks"
+cmd = "pre-commit run --all-files"
+
+[tool.poe.tasks.typecheck]
+help = "Check types with mypy"
+cmd = "mypy ."
+
+[tool.poe.tasks.lint]
+help = "Lint with flake8"
+cmd = "flake8 ."
+
+[tool.poe.tasks.test]
+help = "Run the fast Python tests"
+cmd = "pytest --cov=src -m 'not slow'"
+
+[tool.poe.tasks.test-everything]
+help = "Run all the tests and get the coverage"
+cmd = "pytest -v --junitxml=pytest.xml --cov=src -m 'not slow and not multiprocessing'"
+
+[tool.poe.tasks.autoinstall-torch-cuda]
+## See https://github.com/python-poetry/poetry/issues/2543
+help = "Update torch to use the best CUDA version for your system"
+shell = """
+	python -m pip install light-the-torch && python -m light_the_torch install --upgrade torch torchvision
+"""
+
+[tool.poe.tasks.install-flash-attn]
+shell = """
+	pip install https://github.com/Dao-AILab/flash-attention/releases/download/v2.5.8/flash_attn-2.5.8+cu122torch2.2cxx11abiFALSE-cp310-cp310-linux_x86_64.whl#sha256=53979129f883680327bf5d13027cd014e2d054f4fb5b8856916686ae315e57d6
+	python -c "from transformers.utils import is_flash_attn_2_available; print(f'Flash attention is available: \\033[92m{is_flash_attn_2_available()}\\033[00m')"
+"""
+help = "Install flash attention for torch2.2+cu12"
+
+[tool.poe.tasks.install-causal-conv1d]
+shell = """
+	pip install https://github.com/Dao-AILab/causal-conv1d/releases/download/v1.2.0.post2/causal_conv1d-1.2.0.post2+cu122torch2.2cxx11abiFALSE-cp310-cp310-linux_x86_64.whl#sha256=9fffdd36640e6e52e9c3d2ad6ac5483f109cecc2fdeedfc5767487893f8ccae2
+	python -c "from causal_conv1d import causal_conv1d_fn, causal_conv1d_update; print('\\033[92m Causal Conv1d is installed\\033[00m')"
+"""
+help = "Install causal conv1d for torch2.2+cu12"
+
+[tool.poe.tasks.install-mamba-ssm]
+shell = """
+	pip install https://github.com/state-spaces/mamba/releases/download/v1.2.0.post1/mamba_ssm-1.2.0.post1+cu122torch2.2cxx11abiFALSE-cp310-cp310-linux_x86_64.whl
+	python -c "from mamba_ssm.modules.mamba_simple import Block, Mamba; print('\\033[92m Mamba is installed\\033[00m')"
+"""
+help = "Install causal conv1d for torch2.2+cu12"
+
+
+[tool.poe.tasks.outdated]
+help = 'Show all outdated top-level dependencies'
+shell = """
+	poetry show --outdated | grep --file=<(poetry show --tree | grep '^\\w' | sed 's/^\\([^ ]*\\).*/^\\1\\\\s/')
+"""
+interpreter = "bash"
+
+
+[tool.poetry.dependencies]
+torch = "2.2.1"
+python = "^3.9"
+pytorch-lightning = ">=2.0.0"
+torchvision = "^0.12.0"
+wandb = "^0.16.0"
+torchmetrics = "^0.8.0"
+hydra-core = "^1.1.2"
+hydra-colorlog = "^1.1.0"
+transformers = "4.40.2"
+pydantic = {extras = ["dotenv"], version = "^2.1.1"}
+rich = "^12.4.4"
+overrides = "^6.1.0"
+numpy = "^1.22.3"
+loguru = "^0.7.2"
+timm = "^0.9.12"
+gdown = "^4.7.1"
+datasets = "^2.16.1"
+gradio = "^4.14.0"
+sentencepiece = "^0.1.99"
+opencv-python = "^4.9.0.80"
+peft = "^0.7.1"
+accelerate = "^0.26.1"
+deepspeed = "^0.12.6"
+mypy = "^1.8.0"
+pre-commit = "^3.6.0"
+img2dataset = "^1.45.0"
+packaging = "^24.0"
+
+
+[tool.poetry.dev-dependencies]
+wemake-python-styleguide = "^0.18.0"
+flake8 = "^7.0"
+pytest = "^7.1.2"
+ipykernel = "^6.13.0"
+pre-commit = "^3.0"
+poethepoet = "^0.13.1"
+pytest-cov = "^3.0.0"
+jupyterlab = "^3.3.1"
+pudb = "^2022.1"
+isort = "^5.10.1"
+pytest-cases = "^3.6.10"
+black = {version = "^22.1.0", extras = ["jupyter"]}
+mypy = "^1.8.0"
+types-requests = "^2.27.16"
+flake8-pytest-style = "^1.6.0"
+
+
+[tool.basedpyright]
+exclude = [
+    "storage",
+    "configs",
+    "wandb",
+    "**/.*",
+    "**/*_cache*",
+    "**/python*/test/**",
+]
+# ignore = [
+#     "src/vima/**",
+#     "src/vima_bench/**",
+#     "src/vimasim/**",
+#     "scripts/example.py",
+# ]
+typeCheckingMode = "standard"
+reportMissingTypeStubs = false
+reportUnknownMemberType = false
+reportFunctionMemberAccess = "warning"
+reportUnknownVariableType = false
+reportUntypedFunctionDecorator = false
+reportUnknownLambdaType = false
+reportUnknownArgumentType = false
+reportAny = false
+reportImplicitOverride = false
+reportMissingSuperCall = false
+reportUnusedCallResult = false
+reportCallIssue = false
+reportArgumentType = false
+reportIncompatibleMethodOverride = false
+reportInvalidCast = false
+reportPrivateLocalImportUsage = false
+# Covered by ruff
+reportPrivateUsage = false
+reportUnusedImport = false
+reportPrivateImportUsage = false
+reportImplicitStringConcatenation = false
+reportDeprecated = false
+reportIncompatibleVariableOverride = false
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+filterwarnings = [
+    "ignore::UserWarning",
+    'ignore:Deprecated call to `pkg_resources.declare_namespace:DeprecationWarning',
+]
+
+[tool.ruff]
+line-length = 99
+target-version = "py311"
+unsafe-fixes = true
+src = ["src"]
+
+[tool.ruff.format]
+docstring-code-format = true
+
+[tool.ruff.lint]
+ignore-init-module-imports = true
+# Enable every possible rule
+select = ["ALL"]
+ignore = [
+    # Allow function call as argument default
+    "B008",
+    # Don't ask for docstring at top of module --- put it in the functions/classes
+    "D100",
+    # Do not check for docstring within __init__ method
+    "D107",
+    # Don't ask about line length, Black recommends using bugbear B950 instead
+    "E501",
+    # Disable because this project uses jaxtyping (https://github.com/google/jaxtyping/blob/main/FAQ.md#flake8-is-throwing-an-error)
+    "F722",
+    # Allow import to be uppercase, because torch.nn.functional as F
+    "N812",
+    # Allow asserts to be used because they're just convenient for type-narrowing. Type-narrowing
+    # is more important than the possibility that someone is running python with -O (in optimized
+    # mode).
+    # https://stackoverflow.com/a/68429294
+    "S101",
+    # Do not enforce annotations for self, cls, or similar
+    "ANN1",
+    # Do not block using 'Any' type since it happens
+    "ANN401",
+    # Let Black handle commas
+    "COM",
+    # Let logging use f-strings
+    "G004",
+    # Disable 'flake8-errmsg' because we assume users of this project can read tracebacks
+    "EM",
+    # Allow TODO comments
+    "FIX002",
+    # We don't need to care about creating separate exception classes for every single type of
+    # error
+    "TRY003",
+    # Allow assigning variables before returning them
+    "RET504",
+    # Don't care about requiring an author name or issue link for a todo
+    "TD002",
+    "TD003",
+    # Boolean expressions are fine
+    "FBT001",
+    "FBT002",
+    # Disable flagging commented-out code because it's false-positives on shape comments,
+    "ERA001",
+    # Things to ignore because ruff's formatter says so
+    # https://docs.astral.sh/ruff/formatter/#conflicting-lint-rules
+    "D206",
+    "D300",
+    "E111",
+    "E114",
+    "E117",
+    "ISC001",
+    "ISC002",
+    "Q000",
+    "Q001",
+    "Q002",
+    "Q003",
+    "W191",
+    # open files
+    "PTH123",
+    # Mutable strings
+    "RUF012",
+]
+unfixable = [
+    # Do not remove unused variables
+    "F841",
+    # Do not auto-remove commented out code
+    "ERA001",
+]
+
+[tool.ruff.lint.flake8-quotes]
+inline-quotes = "double"
+
+[tool.ruff.lint.flake8-tidy-imports]
+ban-relative-imports = "all"
+
+[tool.ruff.lint.flake8-type-checking]
+exempt-modules = ["typing", "typing_extensions", "pydantic_numpy"]
+runtime-evaluated-base-classes = [
+    "pydantic.BaseModel",
+    "pydantic.generics.GenericModel",
+]
+
+[tool.ruff.lint.isort]
+combine-as-imports = true
+known-first-party = ["vima", "cogelot", "vima_bench"]
+
+[tool.ruff.lint.mccabe]
+max-complexity = 18
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["D", "S101", "INP001", "PLR2004", "FBT001", "SLF001"]
+"scripts/*" = ["INP001"]
+"src/**/__init__.py" = ["D", "F401", "I002"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.ruff.lint.pylint]
+max-args = 20
+
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
