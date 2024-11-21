@@ -1,18 +1,16 @@
 from pathlib import Path
-from typing import Union
-
 
 BASE_DIR = Path("storage/datasets")
 
 
-class DatasetPaths:  # noqa: WPS230
+class DatasetPaths:
     """Dataclass for data paths.
 
     Some datasets are downloaded with a different tool (img2dataset, etc), or have separate
     hugginface cache (visual genome). We need to know where they are.
     """
 
-    def __init__(self, base_dir: Union[str, Path] = BASE_DIR) -> None:
+    def __init__(self, base_dir: str | Path = BASE_DIR) -> None:
         self.storage = Path(base_dir)
 
         # This needs to be the base dir since the fixtures are within the repo

@@ -98,7 +98,9 @@ class OCRVQALoader(BaseLoader):
         qa_pairs = []
         for question_metadata in list(questions_iterator):
             ocrvqa_metadata = OCRVQAMetadata.model_validate(question_metadata)
-            for question, answer in zip(ocrvqa_metadata.questions, ocrvqa_metadata.answers):
+            for question, answer in zip(
+                ocrvqa_metadata.questions, ocrvqa_metadata.answers, strict=False
+            ):
                 if self._should_keep_question(question):
                     qa_pairs.append({"question": question, "answer": answer})
         return qa_pairs
@@ -157,7 +159,9 @@ class OCRVQALoader(BaseLoader):
 
             qa_pairs = [
                 {"question": question, "answer": answer}
-                for question, answer in zip(ocrvqa_metadata.questions, ocrvqa_metadata.answers)
+                for question, answer in zip(
+                    ocrvqa_metadata.questions, ocrvqa_metadata.answers, strict=False
+                )
             ]
             if not qa_pairs:
                 continue

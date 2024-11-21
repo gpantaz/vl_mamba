@@ -14,7 +14,6 @@ from vl_mamba.datamodels.datamodels import DatasetFeatures, DatasetSplits, Task
 from vl_mamba.datasets.vl_mamba.base_loader import DatasetsLoader
 from vl_mamba.utils.io import json_serializer
 
-
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
 
@@ -33,7 +32,7 @@ class NocapsLoader(DatasetsLoader):
         cache_dir: Path,
         datasets_batch_size: int = 1000,
         chunk_size: int = 1,
-    ):
+    ) -> None:
         super().__init__(
             dataset_name="HuggingFaceM4/NoCaps",
             split=split,
@@ -45,13 +44,9 @@ class NocapsLoader(DatasetsLoader):
         self.chunk_size = chunk_size
         self.cache_dir = cache_dir
 
-    def cast_to_vlmamba_features(  # noqa: WPS231
-        self, batch: dict[str, list[Any]]
-    ) -> dict[str, list[Any]]:
+    def cast_to_vlmamba_features(self, batch: dict[str, list[Any]]) -> dict[str, list[Any]]:
         """Cast the dataset to the format expected by vlmamba."""
-        dataset_examples: dict[str, list[Any]] = {
-            data_key: [] for data_key in DatasetFeatures.keys()
-        }
+        dataset_examples: dict[str, list[Any]] = {data_key: [] for data_key in DatasetFeatures}
 
         df = pd.DataFrame.from_dict(batch)
         for _, instance in df.iterrows():
@@ -94,7 +89,7 @@ class NocapsLoader(DatasetsLoader):
         return dataset
 
     @overrides(check_signature=False)
-    def _build_rows_iterator(self, chunk_size: int) -> Iterator[list[Any]]:  # noqa: WPS210
+    def _build_rows_iterator(self, chunk_size: int) -> Iterator[list[Any]]:
         logger.info(f"Building {self.source} dataset for {self.split}.")
         dataset = self.fetch_dataset_from_hf()
 

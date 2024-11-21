@@ -24,7 +24,7 @@ class GRITLoader(BaseLoader):
         chunk_size: int = 1,
         num_proc: int = 1,
         **kwargs: dict[str, Any],
-    ):
+    ) -> None:
         super().__init__(
             source=source,
             split=split,
@@ -127,7 +127,7 @@ class GRITLoader(BaseLoader):
         return region_annotation
 
     @overrides(check_signature=False)
-    def _build_rows_iterator(self, chunk_size: int) -> Iterator[list[Any]]:  # noqa: WPS231
+    def _build_rows_iterator(self, chunk_size: int) -> Iterator[list[Any]]:
         buffer = []
         image_paths = list(self.image_shard_cache.glob("*.jpg"))
         for image_path in image_paths:

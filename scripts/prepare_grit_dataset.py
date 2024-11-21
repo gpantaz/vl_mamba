@@ -55,8 +55,7 @@ class GRITDatasetPreparator:
         check_overlap: bool = False,
         downsample_images: bool = False,
         num_proc: int = 1,
-    ):
-
+    ) -> None:
         if not Path(cache_dir, "images").exists():
             raise ValueError("The images folder is not found. Please download the images first.")
 
@@ -136,18 +135,17 @@ class GRITDatasetPreparator:
             pf for index, pf in enumerate(parquet_files) if index not in indices_to_remove
         ]
 
-        with Pool(self._num_proc) as pool:
-            with tqdm(total=len(parquet_files)) as pbar:
-                fn = self.compute_noun_phrase_chunks_for_parquet
-                for _ in pool.imap_unordered(fn, parq_files):
-                    pbar.update(1)
+        with Pool(self._num_proc) as pool, tqdm(total=len(parquet_files)) as pbar:
+            fn = self.compute_noun_phrase_chunks_for_parquet
+            for _ in pool.imap_unordered(fn, parq_files):
+                pbar.update(1)
 
     def gather_noun_phrase_frequencies(self) -> dict[str, list[str]]:
         """Compute noun_phrase frequencies."""
         noun_phrase_files = self._noun_phrases_path.iterdir()
         noun_phrases = defaultdict(list)
         for noun_phrase_file in tqdm(noun_phrase_files, desc="Gathering noun_phrase frequencies"):
-            with open(noun_phrase_file, "r") as fp:
+            with open(noun_phrase_file) as fp:
                 noun_phrases_for_shard = json.load(fp)
                 # Some images may have multiple occurrences of the same noun_phrase
                 for noun_phrase, images in noun_phrases_for_shard.items():
@@ -162,7 +160,7 @@ class GRITDatasetPreparator:
         self._print_noun_phrases(noun_phrases)
 
         noun_phrases_sorted = sorted(
-            [(noun_phrase, images) for noun_phrase, images in noun_phrases.items()],
+            noun_phrases.items(),
             key=lambda x: len(x[1]),
         )
 
@@ -181,7 +179,7 @@ class GRITDatasetPreparator:
 
     def plot_distributions(
         self, noun_phrases: dict[str, list[str]], filtered_noun_phrases: dict[str, list[str]]
-    ):
+    ) -> None:
         """Plot the distributions of the noun_phrases."""
         # Get all images from the filtered noun_phrases
         all_selected_images = {
@@ -202,12 +200,12 @@ class GRITDatasetPreparator:
         noun_phrase_dicts = [noun_phrases, noun_phrase_filtered_plot]
         labels = ["Original", "Filtered"]
         colors = ["blue", "green"]
-        for noun_phrase_dict, label, color in zip(noun_phrase_dicts, labels, colors):
+        for noun_phrase_dict, label, color in zip(noun_phrase_dicts, labels, colors, strict=False):
             x = np.arange(len(noun_phrase_dict))
             y = sorted([len(set(img)) for img in noun_phrase_dict.values()])[::-1]
             logger.info(f"{label}: {sum(y)}")
 
-            total = sum(y) // 1e6  # noqa: WPS432
+            total = sum(y) // 1e6
             ax.plot(x, y, color=color, alpha=1, label=f"{label}: {total}M")
             ax.fill_between(x, y, 0, color=color, alpha=0.1)
 
@@ -241,7 +239,7 @@ class GRITDatasetPreparator:
                 for _ in pool.imap_unordered(fn, all_selected_images):
                     pbar.update(1)
 
-    def run(self):
+    def run(self) -> None:
         """Run the GRITDatasetPreparator."""
         # First downsample the images
         if self._do_downsample_images:
@@ -289,7 +287,7 @@ class GRITDatasetPreparator:
     def _compute_image_text_pairs(self, noun_phrases: dict[str, list[str]]) -> None:
         """Print the image-text pairs."""
         images = []
-        for _, image_list in noun_phrases.items():
+        for image_list in noun_phrases.values():
             images.extend(image_list)
         return len(set(images))
 
@@ -378,7 +376,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--num_proc",
         type=int,
-        default=32,  # noqa: WPS432
+        default=32,
         help="Number of processes to use for preprocessing.",
     )
     return parser.parse_args()

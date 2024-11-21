@@ -2,6 +2,7 @@ import argparse
 
 from datasets import load_dataset
 from loguru import logger
+
 from vl_mamba.datasets.vl_mamba.data_paths import DatasetPaths
 
 
@@ -12,7 +13,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--dataset_subset",
         default="llava_pretrain",
-        help="Which dataset subset to use. Look at the options from datamodules/datasets/mm_icl.py.",
+        help="Which dataset subset to use. Look at the options from datamodules/datasets/vl_mamba.py.",
     )
 
     parser.add_argument(

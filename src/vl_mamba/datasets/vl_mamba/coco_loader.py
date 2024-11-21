@@ -37,7 +37,7 @@ class COCOLoader(BaseLoader):
         chunk_size: int = 1,
         num_proc: int = 1,
         **kwargs: dict[str, Any],
-    ):
+    ) -> None:
         super().__init__(
             source=source,
             split=split,
@@ -74,7 +74,9 @@ class COCOLoader(BaseLoader):
 
             image_path = self._get_image_path(image_metadata)
 
-            for caption_id, caption in zip(image_metadata["sentids"], image_metadata["sentences"]):
+            for caption_id, caption in zip(
+                image_metadata["sentids"], image_metadata["sentences"], strict=False
+            ):
                 buffer.append(
                     {
                         "annotation": caption["raw"],

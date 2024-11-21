@@ -1,6 +1,6 @@
 from collections.abc import Iterator
 from pathlib import Path
-from typing import Any, Literal, Optional, Union
+from typing import Any, Literal
 
 import datasets
 from loguru import logger
@@ -38,7 +38,6 @@ from vl_mamba.datasets.vl_mamba.vizwiz_vqa_loader import VizWizVQALoader
 from vl_mamba.datasets.vl_mamba.vqa_v2_loader import VQAv2Loader
 from vl_mamba.datasets.vl_mamba.vsr_loader import VSRLoader
 
-
 DEFAULT_NAME = DatasetNames.pretrain.value
 
 _DESCRIPTION = "VL-Mamba Dataset"
@@ -46,14 +45,14 @@ _DESCRIPTION = "VL-Mamba Dataset"
 _LICENSE = "Please refer to individual LICENSES of each datasets."
 
 
-class VLMambaConfig(datasets.BuilderConfig):  # type: ignore[misc] # noqa: WPS230
+class VLMambaConfig(datasets.BuilderConfig):  # type: ignore[misc]
     """BuilderConfig for VLMamba."""
 
-    def __init__(
+    def __init__(  # noqa: PLR0913
         self,
         name: str = DEFAULT_NAME,
-        subset: Optional[str] = None,
-        num_proc: Optional[int] = None,
+        subset: str | None = None,
+        num_proc: int | None = None,
         datasets_batch_size: int = 1000,
         sqlite3_batch_size: int = 10000,
         chunk_size: int = 10000,
@@ -63,9 +62,9 @@ class VLMambaConfig(datasets.BuilderConfig):  # type: ignore[misc] # noqa: WPS23
         use_gqa_short_answers: bool = True,
         gqa_max_annotations_per_image: int = 20,
         vqa_max_annotations_per_image: int = 20,
-        root_dataset_path: Union[str, Path] = BASE_DIR,
-        refcoco_tasks: Optional[list[str]] = None,
-        visual_genome_tasks: Optional[list[str]] = None,
+        root_dataset_path: str | Path = BASE_DIR,
+        refcoco_tasks: list[str] | None = None,
+        visual_genome_tasks: list[str] | None = None,
         visual_genome_max_annotations_per_image: int = 10,
         localized_narratives_segment_window_size: float = 0.4,
         visual7w_max_questions_per_image_in_turn: int = 3,
@@ -142,9 +141,9 @@ class VLMamba(datasets.ArrowBasedBuilder):  # type: ignore[misc]
     --cache_dir storage/datasets/mm_icl/
     """
 
-    BUILDER_CONFIG_CLASS = VLMambaConfig  # noqa: WPS115
+    BUILDER_CONFIG_CLASS = VLMambaConfig
 
-    BUILDER_CONFIGS = [  # noqa: WPS115
+    BUILDER_CONFIGS = [
         # Datasets-specific configs
         VLMambaConfig(name=DatasetNames.ai2d.value),
         VLMambaConfig(name=DatasetNames.aok_vqa.value),
@@ -182,7 +181,7 @@ class VLMamba(datasets.ArrowBasedBuilder):  # type: ignore[misc]
         VLMambaConfig(name=DatasetNames.synthetic_vg.value),
     ]
 
-    def _info(self) -> datasets.DatasetInfo:  # noqa: WPS110
+    def _info(self) -> datasets.DatasetInfo:
         return datasets.DatasetInfo(
             description=_DESCRIPTION,
             features=DatasetFeatures,
@@ -761,7 +760,7 @@ class VLMamba(datasets.ArrowBasedBuilder):  # type: ignore[misc]
 
         return from_name or from_task
 
-    def _build_loaders(  # noqa: C901, WPS231, WPS213
+    def _build_loaders(  # noqa: C901
         self, dl_manager: datasets.DownloadManager, split_name: str
     ) -> list[BaseLoader]:
         loaders: list[BaseLoader] = []
@@ -833,7 +832,9 @@ class VLMamba(datasets.ArrowBasedBuilder):  # type: ignore[misc]
 
         if self._should_add_grit(self.config.name, split_name):
             if not Path(self.config.dataset_paths.grit_cache_dir, "images").exists():
-                raise ValueError("The images folder is not found. Please download the images first.")
+                raise ValueError(
+                    "The images folder is not found. Please download the images first."
+                )
 
             images_folder = Path(self.config.dataset_paths.grit_cache_dir, "images")
             for image_shard in images_folder.iterdir():
@@ -966,7 +967,7 @@ class VLMamba(datasets.ArrowBasedBuilder):  # type: ignore[misc]
                         self.config.name, split_name, version, refcoco_task
                     )
                     if should_add:
-                        loaders.append(  # noqa: WPS220
+                        loaders.append(
                             RefCOCOLoader(
                                 split=split_name,
                                 source=version,
@@ -1093,6 +1094,6 @@ class VLMamba(datasets.ArrowBasedBuilder):  # type: ignore[misc]
     def _generate_tables(self, loaders: list[BaseLoader]) -> Iterator[tuple[int, Any]]:
         idx = 0
         for loader in loaders:
-            for elt in loader._generate_batches():  # noqa: WPS437
+            for elt in loader._generate_batches():
                 yield idx, elt
                 idx += 1

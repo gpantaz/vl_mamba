@@ -37,7 +37,7 @@ class AI2DLoader(BaseLoader):
         num_proc: int = 1,
         validation_split: float = 0.1,
         **kwargs: dict[str, Any],
-    ):
+    ) -> None:
         super().__init__(
             source=source,
             split=split,
@@ -66,7 +66,7 @@ class AI2DLoader(BaseLoader):
 
     def _get_train_test_ids(self) -> dict[DatasetSplits, list[str]]:
         with open(self.test_ids_file) as fp:
-            data = sorted([line.strip() for line in fp.readlines()])
+            data = sorted([line.strip() for line in fp])
 
         images = os.listdir(str(self.image_folder))
 
@@ -114,7 +114,7 @@ class AI2DLoader(BaseLoader):
         return qa_pairs
 
     @overrides(check_signature=False)
-    def _build_rows_iterator(self, chunk_size: int) -> Iterator[list[Any]]:  # noqa: WPS231
+    def _build_rows_iterator(self, chunk_size: int) -> Iterator[list[Any]]:
         logger.info(f"Building {self.source} dataset for {self.split}.")
         split_ids = self._get_train_test_ids()[self.split]
 
@@ -190,7 +190,7 @@ class AI2DLoader(BaseLoader):
             return ""
 
         context_text = []
-        for _, text_value_dict in text_dict.items():
+        for text_value_dict in text_dict.values():
             context_text.append(
                 (
                     text_value_dict["replacementText"],

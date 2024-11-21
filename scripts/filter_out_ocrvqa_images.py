@@ -1,6 +1,6 @@
 import argparse
 from pathlib import Path
-from typing import Any, Union
+from typing import Any
 
 import numpy as np
 from loguru import logger
@@ -13,7 +13,7 @@ from vl_mamba.datasets.vl_mamba.ocr_vqa_loader import OCRVQALoader
 from vl_mamba.utils.io import read_json, write_json
 
 
-class OCRVQADatasetFilter(Dataset[dict[str, Union[bool, str]]]):
+class OCRVQADatasetFilter(Dataset[dict[str, bool | str]]):
     """Filter out OCRVQA dataset.
 
     Ideally this would be inside the OCRVQALoader class, but I couldnt make it run fast enough.
@@ -39,7 +39,7 @@ class OCRVQADatasetFilter(Dataset[dict[str, Union[bool, str]]]):
         """Return the length of the dataset."""
         return len(self.dataset)
 
-    def __getitem__(self, idx: int) -> dict[str, Union[bool, str]]:
+    def __getitem__(self, idx: int) -> dict[str, bool | str]:
         """Get the item at the given index."""
         return {
             "url": self.dataset[idx]["imageURL"],
@@ -111,14 +111,14 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--min_image_size",
         type=int,
-        default=350,  # noqa: WPS432
+        default=350,
         help="Minimum size of the image to keep.",
     )
 
     parser.add_argument(
         "--uniform_threshold",
         type=float,
-        default=0.85,  # noqa: WPS432
+        default=0.85,
         help="Threshold for the uniformity of the image.",
     )
 

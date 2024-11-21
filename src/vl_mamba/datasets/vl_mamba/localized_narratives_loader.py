@@ -90,14 +90,14 @@ class LocalizedNarrativesLoader(BaseLoader):
         step_window = int(trace[0]["t"] // self.segment_window_size) + 1
         while idx < len(trace) - 1:
             curr_segments = [trace[idx]]
-            for jdx in range(idx + 1, len(trace)):  # noqa: WPS518
+            for jdx in range(idx + 1, len(trace)):
                 end_time = trace[jdx]["t"]
                 if end_time > step_window * self.segment_window_size:
                     break
                 curr_segments.append(trace[jdx])
 
             step_window += 1
-            idx = jdx  # noqa: WPS441
+            idx = jdx
             segments.append(curr_segments)
 
         return segments
@@ -149,7 +149,7 @@ class LocalizedNarrativesLoader(BaseLoader):
         raise FileNotFoundError(f"Image {image_path} not found.")
 
     @overrides(check_signature=False)
-    def _build_rows_iterator(  # noqa: WPS231
+    def _build_rows_iterator(
         self, chunk_size: int, **kwargs: dict[str, Any]
     ) -> Iterator[list[Any]]:
         logger.info(f"Building {self.source} dataset for {self.split}.")

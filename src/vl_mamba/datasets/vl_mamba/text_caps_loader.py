@@ -48,7 +48,7 @@ class TextCapsLoader(BaseLoader):
         chunk_size: int = 1,
         num_proc: int = 1,
         **kwargs: dict[str, Any],
-    ):
+    ) -> None:
         super().__init__(
             source=source,
             split=split,

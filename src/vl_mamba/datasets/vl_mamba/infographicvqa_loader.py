@@ -42,7 +42,7 @@ class InfographicVQALoader(BaseLoader):
         chunk_size: int = 1,
         num_proc: int = 1,
         **kwargs: dict[str, Any],
-    ):
+    ) -> None:
         super().__init__(
             source=source,
             split=split,
@@ -64,7 +64,7 @@ class InfographicVQALoader(BaseLoader):
         )
 
     @overrides(check_signature=False)
-    def _build_rows_iterator(self, chunk_size: int) -> Iterator[list[Any]]:  # noqa: WPS210
+    def _build_rows_iterator(self, chunk_size: int) -> Iterator[list[Any]]:
         logger.info(f"Building {self.source} dataset for {self.split}.")
         questions_metadata = read_json(self.questions_path)
         # Pack the questions by image

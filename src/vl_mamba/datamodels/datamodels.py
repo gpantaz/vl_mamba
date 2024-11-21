@@ -3,12 +3,11 @@ from collections.abc import Mapping
 from dataclasses import dataclass
 from enum import Enum
 from types import MappingProxyType
-from typing import Any, Literal, Optional, Union
+from typing import Any, Literal
 
 import datasets
 from PIL import Image
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
-
 
 STRING_VALUE = "string"
 
@@ -133,21 +132,21 @@ class QAPair(BaseModel):
     """Dataset QA pair."""
 
     question: str
-    answer: Optional[str]
+    answer: str | None
 
 
 class Instance(BaseModel):
     """Dataset instance."""
 
     task: Task
-    image: Optional[Image.Image]
-    caption: Optional[str]
-    qa_pairs: Optional[list[QAPair]]
+    image: Image.Image | None
+    caption: str | None
+    qa_pairs: list[QAPair] | None
     # question: Optional[str]
     # answers: Optional[Union[str, list[str]]]
-    region: Optional[list[Region]]
-    relation: Optional[list[Relation]]
-    chat: Optional[list[ConversationTurn]]
+    region: list[Region] | None
+    relation: list[Relation] | None
+    chat: list[ConversationTurn] | None
     source: str
     metadata: str
 
@@ -202,8 +201,8 @@ class DatasetNames(Enum):
 class DatasetSplits(datasets.Split):  # type: ignore[misc]
     """Dataset splits."""
 
-    TEST_STD = datasets.NamedSplit("teststd")  # noqa: WPS115
-    TEST_DEV = datasets.NamedSplit("testdev")  # noqa: WPS115
+    TEST_STD = datasets.NamedSplit("teststd")
+    TEST_DEV = datasets.NamedSplit("testdev")
 
     @classmethod
     def list_splits(cls) -> list[datasets.Split]:
@@ -260,7 +259,7 @@ class PretrainDatasets:
         if len(self.pretrain_dataset_map) != len(DatasetNames) - 2:
             raise AssertionError("Pretrain dataset map is not equal to all datasets!")
 
-        for key, _ in self.pretrain_dataset_map.items():
+        for key in self.pretrain_dataset_map:
             missing = (
                 key not in DatasetNames.list_all_dataset_names()
                 and key != DatasetNames.pretrain.value
@@ -323,7 +322,7 @@ class InstructionTuningDatasets:
         if len(self.instruction_tuning_dataset_map) != len(DatasetNames) - 2:
             raise AssertionError("instruction_tuning dataset map is not equal to all datasets!")
 
-        for key, _ in self.instruction_tuning_dataset_map.items():
+        for key in self.instruction_tuning_dataset_map:
             missing = (
                 key not in DatasetNames.list_all_dataset_names()
                 and key != DatasetNames.pretrain.value
@@ -353,7 +352,7 @@ class LLavaPretrainModel(BaseModel):
 
     @model_validator(mode="before")
     @classmethod
-    def validate_instance(cls, field_values: dict[str, Any]) -> dict[str, Any]:  # noqa: WPS238
+    def validate_instance(cls, field_values: dict[str, Any]) -> dict[str, Any]:
         """Validate that the annotation and the metadata for an instance are correct."""
         conversations = field_values["annotation"]["conversations"]
         if len(conversations) != 2:
@@ -409,7 +408,7 @@ class TextVQAMetadata(BaseModel):
     question: str
     image_id: str
     question_id: int
-    answers: Optional[list[str]] = None
+    answers: list[str] | None = None
     image_height: float
     image_width: float
     ocr: dict[str, Any]
@@ -428,14 +427,14 @@ class TextVQAMetadata(BaseModel):
 class TextCapsMetadata(BaseModel):
     """TextCaps metadata."""
 
-    caption_str: Optional[str] = None
+    caption_str: str | None = None
     image_id: str
-    caption_id: Optional[int] = None
+    caption_id: int | None = None
     image_height: float
     image_width: float
     set_name: str
     # 5 captions for each example, the references_strs are the other 4 captions, these are absent from test.
-    reference_strs: Optional[list[str]] = None
+    reference_strs: list[str] | None = None
     ocr: dict[str, Any]
     flickr_original_url: str
     flickr300k_url: str = Field(..., alias="flickr_300k_url")
@@ -447,8 +446,8 @@ class GQAMetadata(BaseModel):
     question: str
     question_id: str
     image_id: str = Field(..., alias="imageId")
-    answer: Optional[str] = None
-    full_answer: Optional[str] = Field(default=None, alias="fullAnswer")
+    answer: str | None = None
+    full_answer: str | None = Field(default=None, alias="fullAnswer")
     is_balanced: bool = Field(..., alias="isBalanced")
 
 
@@ -553,10 +552,10 @@ class AOKVQAMetadata(BaseModel):
     question_id: str
     question: str
     choices: list[str]
-    correct_choice_idx: Optional[int] = None
-    direct_answers: Optional[list[str]] = None
+    correct_choice_idx: int | None = None
+    direct_answers: list[str] | None = None
     difficult_direct_answer: bool
-    rationales: Optional[list[str]] = None
+    rationales: list[str] | None = None
 
 
 class VisWizVQAMetadata(BaseModel):
@@ -564,9 +563,9 @@ class VisWizVQAMetadata(BaseModel):
 
     image: str
     question: str
-    answerable: Optional[int] = None
-    answer_type: Optional[str] = None
-    answers: Optional[list[dict[str, str]]] = None
+    answerable: int | None = None
+    answer_type: str | None = None
+    answers: list[dict[str, str]] | None = None
 
 
 class AID2Question(BaseModel):
@@ -601,10 +600,10 @@ class Visual7WQuestion(BaseModel):
 
     question: str
     # Pointing QA pairs do not have the image in the metadata
-    image_id: Optional[int] = None
+    image_id: int | None = None
     qa_id: int
-    multiple_choices: list[Union[str, int]]
-    answer: Union[str, int]
+    multiple_choices: list[str | int]
+    answer: str | int
     question_type: str = Field(..., alias="type")
 
 
@@ -646,12 +645,12 @@ class DocVQAMetadata(BaseModel):
 
     question_id: int = Field(..., alias="questionId")
     question: str
-    question_types: Optional[list[str]] = None
+    question_types: list[str] | None = None
     image: str
     doc_id: int = Field(..., alias="docId")
     ucsf_document_id: str
     ucsf_document_page_no: str
-    answers: Optional[list[str]] = None
+    answers: list[str] | None = None
     data_split: str
 
     @field_validator("image", mode="before")
@@ -668,7 +667,7 @@ class InfographicsVQAMetadata(BaseModel):
     question: str
     image: str = Field(..., alias="image_local_name")
     image_url: str
-    answers: Optional[list[str]] = None
+    answers: list[str] | None = None
     ocr_output_file: str
     data_split: str
 

@@ -18,7 +18,7 @@ class POPELoader(BaseLoader):
     """POPE dataset loader."""
 
     pope_version = {
-        "pope_adversarial": "https://huggingface.co/datasets/gpantaz/pope/resolve/main/coco_pope_adversarial.json?download=true",  # noqa: B950
+        "pope_adversarial": "https://huggingface.co/datasets/gpantaz/pope/resolve/main/coco_pope_adversarial.json?download=true",
         "pope_popular": "https://huggingface.co/datasets/gpantaz/pope/resolve/main/coco_pope_popular.json?download=true",
         "pope_random": "https://huggingface.co/datasets/gpantaz/pope/resolve/main/coco_pope_random.json?download=true",
     }
@@ -41,8 +41,7 @@ class POPELoader(BaseLoader):
         source: Literal["pope_adversarial", "pope_popular", "pope_random"] = "pope_adversarial",
         chunk_size: int = 1,
         num_proc: int = 1,
-    ):
-
+    ) -> None:
         super().__init__(
             source=source,
             split=split,

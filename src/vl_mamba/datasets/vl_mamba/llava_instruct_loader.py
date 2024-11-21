@@ -34,7 +34,7 @@ class LLAVAInstructLoader(BaseLoader):
         chunk_size: int = 1,
         num_proc: int = 1,
         **kwargs: dict[str, Any],
-    ):
+    ) -> None:
         super().__init__(
             source=source,
             split=split,
@@ -84,9 +84,7 @@ class LLAVAInstructLoader(BaseLoader):
 
     @overrides(check_signature=False)
     def _generate_examples(self, examples: list[LLavaInstructModel]) -> dict[str, list[Any]]:
-        dataset_examples: dict[str, list[Any]] = {
-            data_key: [] for data_key in DatasetFeatures.keys()
-        }
+        dataset_examples: dict[str, list[Any]] = {data_key: [] for data_key in DatasetFeatures}
         for example in examples:
             image_path = str(self._get_image_path(example))
             metadata = {"id": example.id, "image_path": image_path}

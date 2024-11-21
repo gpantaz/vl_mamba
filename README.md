@@ -47,6 +47,68 @@ poe install-causal-conv1d
 
 ## Data
 
+### Instructions for specific datasets
+
+#### GRIT
+
+GRIT is downloaded using [img2dataset](https://github.com/rom1504/img2dataset). Note that some of
+the urls may not be available by the time of the downloading
+
+```
+./scripts/download_grit storage/datasets/grit_url_folder storage/datasets/grit
+```
+
+
+To avoid training on the whole data, filter out grit by the noun_phrases (see appendix in the paper
+for full details)
+```
+python prepare_grit_dataset.py \
+	--cache_dir /path/to/downloaded/grit \
+	--output_folder /path/to/downsampled/grit \
+	--downsample_images \
+	--check_overlap 
+```
+
+#### OCRVQA
+
+We also filter out examples from OCRVQA (see appendix in the paper for details)
+
+```
+python filter_out_ocrvqa_images.py \
+	--cache_dir /path/to/downloaded/ocrvqa \
+	--output_json /path/to/filtered/ocrvqa/examples \
+```
+
+
+### Prepare pretraining dataset
+
+```
+python prepare_dataset.py \
+	--dataset_subset llava_pretrain \
+	--root_dataset_path storage/datasets \
+	--cache_dir storage/datasets/vl_mamba \
+```
+
+
+### Prepare instruction tuning dataset
+```
+python prepare_dataset.py \
+	--dataset_subset instruction_tuning \
+	--root_dataset_path storage/datasets \
+	--cache_dir storage/datasets/vl_mamba \
+```
+
+
+### Prepare a single dataset
+```
+python prepare_dataset.py \
+	--dataset_subset coco \
+	--root_dataset_path storage/datasets \
+	--cache_dir storage/datasets/vl_mamba \
+```
+
+see `DatasetNames` in `src/vl_mamba/datamodels/datamodels.py` for the names of different datasets
+
 ## Training
 
 ### Pretraining

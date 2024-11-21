@@ -2,7 +2,7 @@ from abc import abstractmethod
 from collections.abc import Iterator
 from functools import partial
 from multiprocessing import Pool
-from typing import Any, Optional
+from typing import Any
 
 import datasets
 import pyarrow as pa
@@ -38,16 +38,16 @@ class BaseLoader:
     def _build_rows_iterator(
         self, chunk_size: int, **kwargs: dict[str, Any]
     ) -> Iterator[list[Any]]:
-        raise NotImplementedError()
+        raise NotImplementedError
 
     @abstractmethod
     def _generate_tables(self, examples: list[Any], **kwargs: dict[str, Any]) -> pa.Table:
-        raise NotImplementedError()
+        raise NotImplementedError
 
     def _generate_batches(self) -> Iterator[pa.Table]:
         rows_iterator = self._build_rows_iterator(chunk_size=self.chunk_size, **self.gen_kwargs)
         if self.num_proc == 1:
-            for row in rows_iterator:  # noqa: WPS526
+            for row in rows_iterator:
                 yield self._generate_tables(row, **self.gen_kwargs)
         else:
             with Pool(self.num_proc) as pool:
@@ -67,10 +67,10 @@ class DatasetsLoader(BaseLoader):
         dataset_name: str,
         split: str,
         num_proc: int,
-        config_name: Optional[str] = None,
+        config_name: str | None = None,
         datasets_batch_size: int = 1000,
         streaming: bool = False,
-    ):
+    ) -> None:
         super().__init__(source=dataset_name, split=split, writer_batch_size=datasets_batch_size)
         self.dataset_name = dataset_name
         self.config_name = config_name
@@ -81,7 +81,7 @@ class DatasetsLoader(BaseLoader):
     @abstractmethod
     def cast_to_vlmamba_features(self, batch: dict[str, list[Any]]) -> dict[str, list[Any]]:
         """Return list of rows casted as MMICL features."""
-        raise NotImplementedError()
+        raise NotImplementedError
 
     def _generate_examples(
         self, examples: list[Any], **kwargs: dict[str, Any]
@@ -112,7 +112,7 @@ class BaseLoaderWithDLManager(BaseLoader):
         num_proc: int,
         chunk_size: int,
         writer_batch_size: int = 10000,
-    ):
+    ) -> None:
         super().__init__(source=source, split=split, writer_batch_size=writer_batch_size)
         self.gen_kwargs = self.generate_gen_kwargs(dl_manager)
         # Used for multiprocessing
@@ -122,7 +122,7 @@ class BaseLoaderWithDLManager(BaseLoader):
     @abstractmethod
     def generate_gen_kwargs(self, dl_manager: datasets.DownloadManager) -> dict[str, Any]:
         """Generate keyword arguments needed to generate examples."""
-        raise NotImplementedError()
+        raise NotImplementedError
 
     def _generate_tables(self, examples: list[Any], **kwargs: dict[str, Any]) -> pa.Table:
         return pa.table(DatasetFeatures.encode_batch(self._generate_examples(examples, **kwargs)))

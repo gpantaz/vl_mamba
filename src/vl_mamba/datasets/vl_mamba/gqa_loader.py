@@ -48,7 +48,7 @@ class GQALoader(BaseLoader):
         use_short_answers: bool = True,
         max_annotations_per_image: int = 20,
         **kwargs: dict[str, Any],
-    ):
+    ) -> None:
         super().__init__(
             source=source,
             split=split,
@@ -106,7 +106,7 @@ class GQALoader(BaseLoader):
         return [[q_metadata["imageId"], [q_metadata]] for q_metadata in questions_metadata_list]
 
     @overrides(check_signature=False)
-    def _build_rows_iterator(self, chunk_size: int) -> Iterator[list[Any]]:  # noqa: WPS231
+    def _build_rows_iterator(self, chunk_size: int) -> Iterator[list[Any]]:
         logger.info(f"Building {self.source} dataset for {self.split}.")
         image_folder = Path(self.image_paths, "images")
         annotations = self.build_annotations()

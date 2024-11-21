@@ -72,7 +72,7 @@ class VQAv2Loader(BaseLoader):
         num_proc: int = 1,
         max_annotations_per_image: int = 20,
         **kwargs: dict[str, Any],
-    ):
+    ) -> None:
         super().__init__(
             source=source,
             split=split,
@@ -118,7 +118,7 @@ class VQAv2Loader(BaseLoader):
         return questions_metadata
 
     @overrides(check_signature=False)
-    def _build_rows_iterator(self, chunk_size: int) -> Iterator[list[Any]]:  # noqa: WPS210
+    def _build_rows_iterator(self, chunk_size: int) -> Iterator[list[Any]]:
         logger.info(f"Building {self.source} dataset for {self.split}.")
         questions_metadata = self.build_annotations()
         answer_file = self.answer_paths.get(self.split, None)

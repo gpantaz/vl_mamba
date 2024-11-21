@@ -44,8 +44,7 @@ class AOKVQALoader(BaseLoader):
         source: str = "aokvqa",
         chunk_size: int = 1,
         num_proc: int = 1,
-    ):
-
+    ) -> None:
         super().__init__(
             source=source,
             split=split,
@@ -75,9 +74,7 @@ class AOKVQALoader(BaseLoader):
                     f"COCO_test2015_{image_id:012d}.jpg",
                 )
             else:
-                image_path = Path(
-                    self.image_paths[split], split_dir, f"{image_id}.jpg".zfill(16)  # noqa: WPS432
-                )
+                image_path = Path(self.image_paths[split], split_dir, f"{image_id}.jpg".zfill(16))
             if image_path.exists():
                 return image_path
 

@@ -1,5 +1,5 @@
 import json
-import pickle  # noqa: S403
+import pickle
 from collections import defaultdict
 from collections.abc import Iterator
 from pathlib import Path
@@ -62,7 +62,7 @@ class RefCOCOLoader(BaseLoader):
         chunk_size: int = 1,
         num_proc: int = 1,
         task: str = Task.visual_grounding.value,
-    ):
+    ) -> None:
         super().__init__(
             source=source,
             split=split,
@@ -169,16 +169,14 @@ class RefCOCOLoader(BaseLoader):
 
     def _get_image_path(self, image: dict[str, Any]) -> Path:
         for split, split_dir in self.split_dir.items():
-            image_path = Path(
-                self.image_paths[split], split_dir, f"{image['id']}.jpg".zfill(16)  # noqa: WPS432
-            )
+            image_path = Path(self.image_paths[split], split_dir, f"{image['id']}.jpg".zfill(16))
             if image_path.exists():
                 return image_path
 
         raise FileNotFoundError(f"Image for {image['id']} not found.")
 
     @overrides(check_signature=False)
-    def _build_rows_iterator(self, chunk_size: int) -> Iterator[list[Any]]:  # noqa: WPS231
+    def _build_rows_iterator(self, chunk_size: int) -> Iterator[list[Any]]:
         logger.info(f"Building {self.source} dataset for {self.split} and task {self.task}.")
 
         # Dict where keys are annotation ids
@@ -221,9 +219,7 @@ class RefCOCOLoader(BaseLoader):
 
     @overrides(check_signature=False)
     def _generate_examples(self, examples: list[Any]) -> dict[str, list[Any]]:
-        dataset_examples: dict[str, list[Any]] = {
-            data_key: [] for data_key in DatasetFeatures.keys()
-        }
+        dataset_examples: dict[str, list[Any]] = {data_key: [] for data_key in DatasetFeatures}
         for example in examples:
             image_path = str(example["image_metadata"].image_path)
             regions, metadata = self._make_region_annotation(example)

@@ -3,7 +3,7 @@ import random
 from collections import defaultdict
 from collections.abc import Iterator
 from pathlib import Path
-from typing import Any, Literal, Optional, Union
+from typing import Any, Literal
 
 import pyarrow as pa
 from datasets.utils.download_manager import DownloadConfig, DownloadManager
@@ -60,7 +60,7 @@ class Visual7WLoader(BaseLoader):
         num_proc: int = 1,
         max_questions_per_image_in_turn: int = 3,
         **kwargs: dict[str, Any],
-    ):
+    ) -> None:
         super().__init__(
             source=source,
             split=split,
@@ -129,7 +129,7 @@ class Visual7WLoader(BaseLoader):
                 if idx == 0:
                     answers = [answer] + multiple_choices[:idx] + multiple_choices[idx:]
                 elif idx == len(multiple_choices):
-                    answers = multiple_choices + [answer]
+                    answers = [*multiple_choices, answer]
                 else:
                     answers = multiple_choices[:idx] + [answer] + multiple_choices[idx:]
 
@@ -170,7 +170,6 @@ class Visual7WLoader(BaseLoader):
         chunk_size: int,
         source: str,
     ) -> Iterator[list[Any]]:
-
         pointing_annotations = self.load_pointing_annotations(self._pointing_answers_file_path)
 
         buffer = []
@@ -236,7 +235,6 @@ class Visual7WLoader(BaseLoader):
         chunk_size: int,
         source: str,
     ) -> Iterator[list[Any]]:
-
         # telling_annotations = self.load_telling_annotations(self._telling_answers_file_path)
 
         buffer = []
@@ -298,10 +296,9 @@ class Visual7WLoader(BaseLoader):
         if self.split == DatasetSplits.TEST:
             qa_chunks = []
             for pair in image_metadata.qa_pairs:
-
                 # Unforunately there is no predefined order of the candidate answers
                 # In this case we will shuffle the answers to have a more robust evaluation
-                answers = pair.multiple_choices + [pair.answer]
+                answers = [*pair.multiple_choices, pair.answer]
                 random.shuffle(answers)
                 qa_chunks.append(
                     [
@@ -343,8 +340,8 @@ class Visual7WLoader(BaseLoader):
         max_width: int,
         max_height: int,
         return_as: Literal["dict", "list"] = "dict",
-        max_boxes: Optional[int] = None,
-    ) -> Union[dict[str, list[float]], list[list[float]]]:
+        max_boxes: int | None = None,
+    ) -> dict[str, list[float]] | list[list[float]]:
         object_bboxes = {} if return_as == "dict" else []
         if max_boxes is not None:
             # Sort the boxes by area and get the top max_boxes

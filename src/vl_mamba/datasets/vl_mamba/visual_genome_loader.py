@@ -70,13 +70,9 @@ class VisualGenomeLoader(DatasetsLoader):
                     validation_images.append(int(annotation["cocoid"]))
         self.validation_images = validation_images
 
-    def cast_to_vlmamba_features(  # noqa: WPS231
-        self, batch: dict[str, list[Any]]
-    ) -> dict[str, list[Any]]:
+    def cast_to_vlmamba_features(self, batch: dict[str, list[Any]]) -> dict[str, list[Any]]:
         """Cast the dataset to the format expected by vlmamba."""
-        dataset_examples: dict[str, list[Any]] = {
-            data_key: [] for data_key in DatasetFeatures.keys()
-        }
+        dataset_examples: dict[str, list[Any]] = {data_key: [] for data_key in DatasetFeatures}
 
         df = pd.DataFrame.from_dict(batch)
         for _, instance in df.iterrows():
@@ -90,7 +86,7 @@ class VisualGenomeLoader(DatasetsLoader):
                     dataset_examples[instance_key].extend(instance_value)
             elif self.task == Task.relationship_detection.value:
                 instance_annotation = self._process_relation_instance(instance)
-                for instance_key, instance_value in instance_annotation.items():  # noqa: WPS440
+                for instance_key, instance_value in instance_annotation.items():
                     dataset_examples[instance_key].extend(instance_value)
             else:
                 raise ValueError(f"Task {self.task} not supported by VG.")
@@ -178,9 +174,7 @@ class VisualGenomeLoader(DatasetsLoader):
         The instance is processed in chunks of where each element in the chunk has at most
         self.max_annotations_per_image annotations.
         """
-        instance_annotations: dict[str, list[Any]] = {
-            data_key: [] for data_key in DatasetFeatures.keys()
-        }
+        instance_annotations: dict[str, list[Any]] = {data_key: [] for data_key in DatasetFeatures}
 
         annotations = [
             region for region in instance["regions"] if not self.should_skip_instance(region)
@@ -212,9 +206,7 @@ class VisualGenomeLoader(DatasetsLoader):
         The instance is processed in chunks of where each element in the chunk has at most
         self.max_annotations_per_image annotations.
         """
-        instance_annotations: dict[str, list[Any]] = {
-            data_key: [] for data_key in DatasetFeatures.keys()
-        }
+        instance_annotations: dict[str, list[Any]] = {data_key: [] for data_key in DatasetFeatures}
 
         annotation_chunks = [
             instance["qas"][step : step + self.max_annotations_per_image]
@@ -225,11 +217,10 @@ class VisualGenomeLoader(DatasetsLoader):
             return {}
 
         for annotation_chunk in annotation_chunks:
-            chunk_qa_pairs = []
-            for annotation in annotation_chunk:
-                chunk_qa_pairs.append(
-                    {"question": annotation["question"], "answer": annotation["answer"]}
-                )
+            chunk_qa_pairs = [
+                {"question": annotation["question"], "answer": annotation["answer"]}
+                for annotation in annotation_chunk
+            ]
 
             instance_annotations["qa_pairs"].append(chunk_qa_pairs)
 
@@ -243,9 +234,7 @@ class VisualGenomeLoader(DatasetsLoader):
         The instance is processed in chunks of where each element in the chunk has at most
         self.max_annotations_per_image annotations.
         """
-        instance_annotations: dict[str, list[Any]] = {
-            data_key: [] for data_key in DatasetFeatures.keys()
-        }
+        instance_annotations: dict[str, list[Any]] = {data_key: [] for data_key in DatasetFeatures}
 
         annotation_chunks = [
             instance["relationships"][step : step + self.max_annotations_per_image]
@@ -328,7 +317,7 @@ class VisualGenomeLoader(DatasetsLoader):
     ) -> dict[str, list[Any]]:
         """Fill empty fields with None."""
         max_len = max([len(ann) for ann in instance_annotations.values()])
-        for key in instance_annotations.keys():
+        for key in instance_annotations:
             # Use the first value for `task`, `image` and `source`
             if key in {"task", "image", "source", "metadata"}:
                 instance_annotations[key] = [instance_annotations[key][0] for _ in range(max_len)]
