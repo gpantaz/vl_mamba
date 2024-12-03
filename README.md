@@ -55,7 +55,7 @@ GRIT is downloaded using [img2dataset](https://github.com/rom1504/img2dataset). 
 the urls may not be available by the time of the downloading
 
 ```
-./scripts/download_grit storage/datasets/grit_url_folder storage/datasets/grit
+./scripts/download_grit.sh storage/datasets/grit_url_folder storage/datasets/grit
 ```
 
 
