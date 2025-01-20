@@ -4,7 +4,7 @@
 ## Requirements
 
 ```
-conda create -p ~/sharedscratch/conda_envs/athnlp2024-cu12 python=3.10
+conda create -p vl_mamba python=3.10
 
 # Install dependencies
 poetry install
