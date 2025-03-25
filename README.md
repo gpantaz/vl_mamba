@@ -141,3 +141,29 @@ see `DatasetNames` in `src/vl_mamba/datamodels/datamodels.py` for the names of d
 
 All the logs regarding pretraining / finetuning can be found on [wandb](https://wandb.ai/gpantaz/vl_mamba?nw=nwusergpantaz)
 Note that some of the runs were resumed from a previous checkpoint.
+
+
+## How to Cite
+
+```
+@inproceedings{pantazopoulos-etal-2024-shaking,
+    title = "Shaking Up {VLM}s: Comparing Transformers and Structured State Space Models for Vision {\&} Language Modeling",
+    author = "Pantazopoulos, Georgios  and
+      Nikandrou, Malvina  and
+      Suglia, Alessandro  and
+      Lemon, Oliver  and
+      Eshghi, Arash",
+    editor = "Al-Onaizan, Yaser  and
+      Bansal, Mohit  and
+      Chen, Yun-Nung",
+    booktitle = "Proceedings of the 2024 Conference on Empirical Methods in Natural Language Processing",
+    month = nov,
+    year = "2024",
+    address = "Miami, Florida, USA",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/2024.emnlp-main.793/",
+    doi = "10.18653/v1/2024.emnlp-main.793",
+    pages = "14318--14337",
+    abstract = "This study explores replacing Transformers in Visual Language Models (VLMs) with Mamba, a recent structured state space model (SSM) that demonstrates promising performance in sequence modeling. We test models up to 3B parameters under controlled conditions, showing that Mamba-based VLMs outperforms Transformers-based VLMs in captioning, question answering, and reading comprehension. However, we find that Transformers achieve greater performance in visual grounding and the performance gap widens with scale. We explore two hypotheses to explain this phenomenon: 1) the effect of task-agnostic visual encoding on the updates of the hidden states, and 2) the difficulty in performing visual grounding from the perspective of in-context multimodal retrieval. Our results indicate that a task-aware encoding yields minimal performance gains on grounding, however, Transformers significantly outperform Mamba at in-context multimodal retrieval. Overall, Mamba shows promising performance on tasks where the correct output relies on a summary of the image but struggles when retrieval of explicit information from the context is required."
+}
+```
