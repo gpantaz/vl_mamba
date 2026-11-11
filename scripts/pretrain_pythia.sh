@@ -42,6 +42,6 @@ deepspeed src/vl_mamba/train_hf.py \
 	--data_seed 12345 \
 	--dataloader_num_workers 4 \
 	--logging_nan_inf_filter False \
-	--run_name pretrain-mamba-1.4b_imgsz224_psz32 \
+	--run_name pretrain-pythia-1.4b_imgsz224_psz32 \
 	--project_name vl-mamba \
 	--report_to wandb \
