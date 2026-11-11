@@ -1,5 +1,5 @@
 deepspeed src/vl_mamba/train_hf.py \
-	--model_name state-spaces/mamba-1.4b \
+	--model_name EleutherAI/pythia-1.4b \
 	--train_only_visual_embeddings True \
 	--image_size 224 \
 	--patch_size 32 \
